@@ -28,71 +28,76 @@ export class UsuarioComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
-    //this.obtenerUsuario();
+    this.obtenerUsuario();
   }
 
   ngAfterViewInit(): void {
     this.dataListaUsuarios.paginator = this.paginacionTabla;
   }
 
-  // obtenerUsuario() {
-  //   this._usuarioServicio.lista().subscribe({
-  //     next: (data) => {
-  //       if (data.status)
-  //         this.dataListaUsuarios.data = data.value;
-  //       else
-  //         this._utilidadServicio.mostrarAlerta("No se encontraron datos", "Oops!")
-  //     },
-  //     error: (e) => {}
-  //   })
-  // }
+  obtenerUsuario() {
+    this._usuarioServicio.lista().subscribe({
+      next: (data) => {
+        console.log(data); 
+        if (data.status) {
+          this.dataListaUsuarios.data = data.value;
+          console.log(this.dataListaUsuarios.data); 
+        } else {
+          this._utilidadServicio.mostrarAlerta("No se encontraron datos", "Oops!");
+        }
+      },
+      error: (e) => {
+        console.error(e); 
+      }
+    });
+  }
 
-  // aplicarFiltroTabla(event: Event) {
-  //   const filterValue = (event.target as HTMLInputElement).value;
-  //   this.dataListaUsuarios.filter = filterValue.trim().toLocaleLowerCase();
-  // }
+  aplicarFiltroTabla(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.dataListaUsuarios.filter = filterValue.trim().toLocaleLowerCase();
+  }
 
   nuevoUsuario() {
     this.dialog.open(ModalUsuarioComponent, {
       disableClose: true
     }).afterClosed().subscribe(resultado => {
-      //if (resultado === "true") this.obtenerUsuario();
+      if (resultado === "true") this.obtenerUsuario();
     });
   }
 
-  // editarUsuario(usuario: Usuario) {
-  //   this.dialog.open(ModalUsuarioComponent, {
-  //     disableClose: true,
-  //     data: usuario
-  //   }).afterClosed().subscribe(resultado => {
-  //     if (resultado === "true") this.obtenerUsuario();
-  //   });
-  // }
+  editarUsuario(usuario: Usuario) {
+    this.dialog.open(ModalUsuarioComponent, {
+      disableClose: true,
+      data: usuario
+    }).afterClosed().subscribe(resultado => {
+      if (resultado === "true") this.obtenerUsuario();
+    });
+  }
 
-  // eliminarUsuario(usuario: Usuario) {
-  //   Swal.fire({
-  //     title: 'Desea eliminar el usuario?',
-  //     text: usuario.nombreCompleto,
-  //     icon: "warning",
-  //     confirmButtonColor: '#3085D6',
-  //     confirmButtonText: 'Si, eliminar',
-  //     showCancelButton: true,
-  //     cancelButtonColor: '#d33',
-  //     cancelButtonText: 'No, volver'
-  //   }).then(resultado => {
-  //     if (resultado.isConfirmed) {
-  //       this._usuarioServicio.eliminar(usuario.idUsuario).subscribe({
-  //         next:(data) => {
-  //           if(data.status) {
-  //             this._utilidadServicio.mostrarAlerta("El usuario fue eliminado", "Listo");
-  //             this.obtenerUsuario();
-  //             }else {
-  //             this._utilidadServicio.mostrarAlerta("No se pudo eliminar el usuario", "Error");
-  //           }
-  //         }
-  //       })
-  //     }
-  //   }) 
-  // }
+  eliminarUsuario(usuario: Usuario) {
+    Swal.fire({
+      title: 'Desea eliminar el usuario?',
+      text: usuario.nombreCompleto,
+      icon: "warning",
+      confirmButtonColor: '#3085D6',
+      confirmButtonText: 'Si, eliminar',
+      showCancelButton: true,
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'No, volver'
+    }).then(resultado => {
+      if (resultado.isConfirmed) {
+        this._usuarioServicio.eliminar(usuario.idUsuario).subscribe({
+          next:(data) => {
+            if(data.status) {
+              this._utilidadServicio.mostrarAlerta("El usuario fue eliminado", "Listo");
+              this.obtenerUsuario();
+              }else {
+              this._utilidadServicio.mostrarAlerta("No se pudo eliminar el usuario", "Error");
+            }
+          }
+        })
+      }
+    }) 
+  }
 
 }

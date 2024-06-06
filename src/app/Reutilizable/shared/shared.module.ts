@@ -32,6 +32,10 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MomentDateModule } from '@angular/material-moment-adapter';
 
+import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDividerModule } from '@angular/material/divider';
+
 @NgModule({
   declarations: [],
   imports: [
@@ -58,7 +62,10 @@ import { MomentDateModule } from '@angular/material-moment-adapter';
     MatTooltipModule,
     MomentDateModule,
     MatAutocompleteModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    // BrowserModule,
+    // BrowserAnimationsModule,
+    MatDividerModule
   ],
   exports: [
     ReactiveFormsModule,
@@ -83,7 +90,10 @@ import { MomentDateModule } from '@angular/material-moment-adapter';
     MatTooltipModule,
     MomentDateModule,
     MatAutocompleteModule,
-    MatFormFieldModule
+    MatFormFieldModule,
+    // BrowserModule,
+    // BrowserAnimationsModule,
+    MatDividerModule
   ],
   providers: [
     MatDatepickerModule,
