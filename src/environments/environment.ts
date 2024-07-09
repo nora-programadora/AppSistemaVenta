@@ -4,7 +4,7 @@
 
 export const environment = {
   production: false,
-  endpoint: ""
+  endpoint: "https://temporary-endpoint.com/api/"
 };
 
 /*
