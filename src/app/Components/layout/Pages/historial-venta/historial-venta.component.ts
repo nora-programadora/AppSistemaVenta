@@ -11,34 +11,41 @@ import { Venta } from 'src/app/Interfaces/venta';
 import { VentaService } from 'src/app/Services/venta.service';
 import { UtilidadService } from 'src/app/Reutilizable/utilidad.service';
 
-export const MY_DATA_FORMATS = {
+export const MY_DATE_FORMATS = {
   parse: {
-    dateInput: 'DD/MM/YYYY'
+    dateInput: 'DD/MM/YYYY',
   },
   display: {
     dateInput: 'DD/MM/YYYY',
-    monthYearLabel: 'MMMMM YYYY'
-  }
-}
+    monthYearLabel: 'MMMM YYYY',
+    dateA11yLabel: 'DD/MM/YYYY',
+    monthYearA11yLabel: 'MMMM YYYY',
+  },
+};
 
 @Component({
   selector: 'app-historial-venta',
   templateUrl: './historial-venta.component.html',
   styleUrls: ['./historial-venta.component.css'],
   providers: [
-    {provide: MY_DATA_FORMATS, useValue: MY_DATA_FORMATS}
+    { provide: MAT_DATE_FORMATS, useValue: MY_DATE_FORMATS }
   ]
 })
 export class HistorialVentaComponent implements OnInit, AfterViewInit {
   
-  formularioBusqueda: FormGroup | undefined;
+  formularioBusqueda: FormGroup;
   opcionesBusqueda: any[] = [
     {value: 'fecha', descripcion: 'por fechas' },
     {value: 'numero', descripcion: 'Numero venta'}
   ]
 
   columnasTabla: string[] = ['fechaRegistro', 'numeroDocumento', 'tipoPago', 'total', 'accion']
-  dataInicio: Venta[] = []
+  // dataInicio: Venta[] = [];
+  dataInicio: Venta[] = [
+    { fechaRegistro: '01/01/2023', numeroDocumento: '001', tipoPago: 'Efectivo', totalTexto: '100', detalleVenta: [] },
+    { fechaRegistro: '02/01/2023', numeroDocumento: '002', tipoPago: 'Tarjeta', totalTexto: '200', detalleVenta: [] },
+    { fechaRegistro: '03/01/2023', numeroDocumento: '003', tipoPago: 'Efectivo', totalTexto: '150', detalleVenta: [] }
+  ];
   datoListaVenta = new MatTableDataSource(this.dataInicio);
   @ViewChild(MatPaginator) paginacionTabla!: MatPaginator;
 
@@ -60,15 +67,60 @@ export class HistorialVentaComponent implements OnInit, AfterViewInit {
         numero: '',
         fechaInicio: '',
         fechaFin: ''
-      })
-    })
-  }
-  
-  ngAfterViewInit(): void {
-    throw new Error('Method not implemented.');
+      });
+    });
+
   }
 
   ngOnInit(): void {
   }
 
+  ngAfterViewInit(): void {
+    this.datoListaVenta.paginator = this.paginacionTabla;
+  }
+
+  aplicarFiltroTabla(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.datoListaVenta.filter = filterValue.trim().toLocaleLowerCase();
+  }
+
+  buscarVentas() {
+    let _fechaInicio: string = '';
+    let _fechaFin: string = ''
+
+    if (this.formularioBusqueda?.value.buscarPor === "fecha") {
+      _fechaInicio = moment(this.formularioBusqueda.value.fechaInicio).format('DD/MM/YYYY');
+      _fechaFin = moment(this.formularioBusqueda.value.fechaFin).format('DD/MM/YYYY');
+
+      if (_fechaInicio === 'invalid date' || _fechaFin === 'Invalid date') {
+        this._utilidadServicio.mostrarAlerta('Debe ingresar ambas fechas', "Oops!");
+        return;
+      }
+    }
+
+    this._ventaServicio.historial(
+      this.formularioBusqueda.value.buscarPor,
+      this.formularioBusqueda.value.numero,
+      _fechaInicio,
+      _fechaFin
+    ).subscribe({
+      next: (data) => {
+        if (data.status)
+          this.datoListaVenta = data.value
+        else
+          this._utilidadServicio.mostrarAlerta("No se encontraron datos", "Oops!");
+      },
+      error:(e) => {}
+    })
+  }
+
+  verDetalleVenta(_venta: Venta) {
+    this.dialog.open(ModalDetalleVentaComponent, {
+      data: _venta,
+      disableClose: true,
+      width: '700px'
+    })
+  }
+
+  
 }

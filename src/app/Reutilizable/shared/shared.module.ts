@@ -65,6 +65,8 @@ import { MatDividerModule } from '@angular/material/divider';
     MatFormFieldModule,
     // BrowserModule,
     // BrowserAnimationsModule,
+    MatDividerModule,
+    MatDatepickerModule,
     MatDividerModule
   ],
   exports: [
@@ -93,6 +95,8 @@ import { MatDividerModule } from '@angular/material/divider';
     MatFormFieldModule,
     // BrowserModule,
     // BrowserAnimationsModule,
+    MatDividerModule,
+    MatDatepickerModule,
     MatDividerModule
   ],
   providers: [
